@@ -3,7 +3,7 @@
 **PixelForge** is a high-performance, pixel-art themed productivity dashboard built for creators who value aesthetics and discipline. It gamifies your daily workflow using an RPG-inspired XP system and a sleek retro-futuristic UI.
 
 ## 🚀 Live Link
-**Check it out here:** [PixelForge Live Demo](https://pixel-forge-saifou.vercel.app/)
+**Check it out here:** [PixelForge Live Demo]([https://pixel-forge-saifou.vercel.app/](https://vercel.com/saifousoltani-3222s-projects/pixel-forge))
 
 ## ✨ Key Features
 
