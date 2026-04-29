@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PixelForge — Productivity Dashboard</title>
+
+  <!-- Press Start 2P: the soul of the retro aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       FLOATING PIXEL PARTICLES (background deco)
+       ══════════════════════════════════════════ -->
+  <div class="pixel-field" aria-hidden="true">
+    <!-- JS will inject pixel sprites here -->
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCANLINE OVERLAY
+       ══════════════════════════════════════════ -->
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- ══════════════════════════════════════════
+       HEADER / HUD BAR
+       ══════════════════════════════════════════ -->
+  <header class="hud-bar">
+    <div class="hud-logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">PIXEL<span class="logo-accent">FORGE</span></span>
+      <span class="logo-bracket">]</span>
+    </div>
+
+    <div class="hud-player">
+      <!-- Player level badge -->
+      <div class="level-badge">
+        <span class="level-label">LVL</span>
+        <span class="level-value" id="player-level">1</span>
+      </div>
+
+      <!-- Global XP Bar -->
+      <div class="xp-container">
+        <div class="xp-label">
+          <span>XP</span>
+          <span id="xp-display">0 / 100</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-fill" id="xp-bar"></div>
+          <div class="xp-shine"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud-date" id="hud-date"></div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN GRID LAYOUT
+       ══════════════════════════════════════════ -->
+  <main class="dashboard-grid">
+
+    <!-- ─── PANEL 1: TASK FORGE ─── -->
+    <section class="panel panel--tasks" id="panel-tasks">
+      <div class="panel-header">
+        <span class="panel-icon">⚔</span>
+        <h2 class="panel-title">TASK FORGE</h2>
+        <span class="panel-subtitle">QUEST LOG</span>
+      </div>
+
+      <!-- Task add form -->
+      <div class="task-input-zone">
+        <input
+          type="text"
+          id="task-input"
+          class="pixel-input"
+          placeholder="ENTER QUEST NAME..."
+          maxlength="60"
+          autocomplete="off"
+        />
+        <div class="difficulty-selector">
+          <span class="diff-label">DIFFICULTY:</span>
+          <div class="diff-buttons">
+            <button class="diff-btn active" data-diff="easy" data-xp="10">
+              <span class="diff-star">★</span> EASY
+            </button>
+            <button class="diff-btn" data-diff="medium" data-xp="25">
+              <span class="diff-star">★★</span> MED
+            </button>
+            <button class="diff-btn" data-diff="hard" data-xp="50">
+              <span class="diff-star">★★★</span> HARD
+            </button>
+            <button class="diff-btn" data-diff="boss" data-xp="100">
+              <span class="diff-star">💀</span> BOSS
+            </button>
+          </div>
+        </div>
+        <button class="pixel-btn btn--primary" id="add-task-btn">
+          + ADD QUEST
+        </button>
+      </div>
+
+      <!-- Task list -->
+      <div class="task-list" id="task-list">
+        <!-- Tasks injected by JS -->
+        <div class="empty-state" id="empty-state">
+          <span class="empty-icon">📜</span>
+          <p>NO ACTIVE QUESTS</p>
+          <p class="empty-sub">ADD A TASK TO BEGIN YOUR JOURNEY</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PANEL 2: POMODORO ─── -->
+    <section class="panel panel--pomodoro" id="panel-pomodoro">
+      <div class="panel-header">
+        <span class="panel-icon">⏱</span>
+        <h2 class="panel-title">FOCUS CORE</h2>
+        <span class="panel-subtitle">POMODORO</span>
+      </div>
+
+      <!-- Retro loading-screen timer display -->
+      <div class="timer-screen">
+        <div class="timer-crt-border">
+          <div class="timer-scanlines"></div>
+          <div class="timer-display" id="timer-display">25:00</div>
+          <div class="timer-mode" id="timer-mode">WORK SESSION</div>
+          <div class="timer-progress-track">
+            <div class="timer-progress-fill" id="timer-progress"></div>
+          </div>
+          <div class="loading-bar-row">
+            <span class="loading-dot" id="ld1">■</span>
+            <span class="loading-dot" id="ld2">■</span>
+            <span class="loading-dot" id="ld3">■</span>
+            <span class="loading-dot" id="ld4">■</span>
+            <span class="loading-dot" id="ld5">■</span>
+            <span class="loading-dot" id="ld6">■</span>
+            <span class="loading-dot" id="ld7">■</span>
+            <span class="loading-dot" id="ld8">■</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timer controls -->
+      <div class="timer-controls">
+        <button class="pixel-btn btn--start" id="timer-start">▶ START</button>
+        <button class="pixel-btn btn--pause" id="timer-pause" disabled>⏸ PAUSE</button>
+        <button class="pixel-btn btn--reset" id="timer-reset">↺ RESET</button>
+      </div>
+
+      <!-- Mode selector -->
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="work" data-mins="25">WORK 25m</button>
+        <button class="mode-btn" data-mode="short" data-mins="5">SHORT 5m</button>
+        <button class="mode-btn" data-mode="long" data-mins="15">LONG 15m</button>
+      </div>
+
+      <!-- Session counter -->
+      <div class="session-tracker">
+        <span class="session-label">SESSIONS TODAY:</span>
+        <div class="session-gems" id="session-gems">
+          <!-- Gems injected by JS -->
+        </div>
+        <span class="session-count" id="session-count">0</span>
+      </div>
+    </section>
+
+    <!-- ─── PANEL 3: STATS ─── -->
+    <section class="panel panel--stats" id="panel-stats">
+      <div class="panel-header">
+        <span class="panel-icon">📊</span>
+        <h2 class="panel-title">STAT BOARD</h2>
+        <span class="panel-subtitle">ANALYTICS</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="stat-completed">0</div>
+          <div class="stat-label">COMPLETED</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value" id="stat-total-xp">0</div>
+          <div class="stat-label">TOTAL XP</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-label">DAY STREAK</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💀</div>
+          <div class="stat-value" id="stat-boss">0</div>
+          <div class="stat-label">BOSS SLAIN</div>
+        </div>
+      </div>
+
+      <!-- Achievement badges -->
+      <div class="achievements">
+        <div class="ach-header">ACHIEVEMENTS</div>
+        <div class="ach-list" id="ach-list">
+          <div class="ach-badge locked" data-ach="first_quest" title="Complete your first quest">
+            <span>🗡</span><span class="ach-name">FIRST BLOOD</span>
+          </div>
+          <div class="ach-badge locked" data-ach="level5" title="Reach Level 5">
+            <span>⭐</span><span class="ach-name">RISING STAR</span>
+          </div>
+          <div class="ach-badge locked" data-ach="boss_slayer" title="Defeat a Boss task">
+            <span>💀</span><span class="ach-name">BOSS SLAYER</span>
+          </div>
+          <div class="ach-badge locked" data-ach="streak3" title="3-day streak">
+            <span>🔥</span><span class="ach-name">ON FIRE</span>
+          </div>
+          <div class="ach-badge locked" data-ach="ten_tasks" title="Complete 10 tasks">
+            <span>🏆</span><span class="ach-name">VETERAN</span>
+          </div>
+          <div class="ach-badge locked" data-ach="level10" title="Reach Level 10">
+            <span>👑</span><span class="ach-name">FORGE MASTER</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PANEL 4: QUICK NOTES ─── -->
+    <section class="panel panel--notes" id="panel-notes">
+      <div class="panel-header">
+        <span class="panel-icon">📝</span>
+        <h2 class="panel-title">DATA LOGS</h2>
+        <span class="panel-subtitle">NOTES</span>
+      </div>
+      <textarea
+        class="pixel-textarea"
+        id="notes-area"
+        placeholder="// ENTER YOUR NOTES HERE...&#10;// DATA AUTO-SAVES TO LOCAL STORAGE"
+        spellcheck="false"
+      ></textarea>
+      <div class="notes-footer">
+        <span id="notes-char-count">0 CHARS</span>
+        <span class="notes-saved" id="notes-saved">SAVED ✓</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       LEVEL UP OVERLAY (triggered on level up)
+       ══════════════════════════════════════════ -->
+  <div class="levelup-overlay" id="levelup-overlay" aria-live="assertive">
+    <div class="levelup-box">
+      <div class="levelup-stars">★ ★ ★</div>
+      <div class="levelup-title">LEVEL UP!</div>
+      <div class="levelup-new" id="levelup-new">LEVEL 2</div>
+      <div class="levelup-subtitle">QUEST COMPLETED</div>
+      <div class="pixel-explosion" id="pixel-explosion"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <span class="footer-bracket">[</span>
+    PIXELFORGE v1.0 — BUILT WITH ♥ BY
+    <span class="footer-author">SOLTANI SEYF EDDINE</span>
+    <span class="footer-bracket">]</span>
+    <span class="footer-copy">© 2025</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
